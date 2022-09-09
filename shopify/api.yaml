@@ -1,0 +1,3107 @@
+openapi: 3.0.0
+info:
+  title: Shopify API
+  description: 'The REST Admin API lets you build apps and other integrations for the Shopify admin.'
+  contact:
+    name: Shopify
+    url: https://shopify.dev/docs/admin-api/rest/reference
+  version: '2021-10'
+servers:
+  - url: https://{shop}.myshopify.com
+tags:
+  - name: Access
+  - name: Analytics
+  - name: Billing
+  - name: Customers
+  - name: DeprecatedAPICalls
+  - name: Discounts
+  - name: Events
+  - name: Inventory
+  - name: MarketingEvent
+  - name: Metafield
+  - name: OnlineStore
+  - name: Orders
+  - name: Plus
+  - name: Products
+  - name: SalesChannel
+  - name: ShippingAndFulfillment
+  - name: StoreProperties
+  - name: TenderTransaction
+paths:
+  /admin/api/2021-10/customers.json:
+    get:
+      description: Retrieves a list of customers.
+      operationId: CustomerList
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: string
+          description: Restrict results to customers specified by a comma-separated list of IDs.
+        - $ref: '#/components/parameters/since_idParam'
+        - in: query
+          name: created_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Show customers created after a specified date.(format: 2014-04-25T16:15:47-04:00)'
+        - in: query
+          name: created_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Show customers created before a specified date.(format: 2014-04-25T16:15:47-04:00)'
+        - in: query
+          name: updated_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Show customers last updated after a specified date.(format: 2014-04-25T16:15:47-04:00)'
+        - in: query
+          name: updated_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Show customers last updated before a specified date.(format: 2014-04-25T16:15:47-04:00)'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomersResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_customers
+      tags:
+        - Customers
+    post:
+      description: Creates a customer.
+      operationId: CustomerCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomerRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomerResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_customers
+      tags:
+        - Customers
+  /admin/api/2021-10/customers/search.json:
+    get:
+      description: Searches for customers that match a supplied query.
+      operationId: CustomerSearch
+      parameters:
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: 'Set the field and direction by which to order results.(default: last_order_date DESC)'
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: |
+            Text to search for in the shop's customer data. Note: There are set of supported queries(check Shopify documentation). All other queries returns all customers.
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomersResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_customers
+      tags:
+        - Customers
+  /admin/api/2021-10/customers/{customer_id}.json:
+    parameters:
+      - in: path
+        name: customer_id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      description: Retrieves a single customer.
+      operationId: CustomerGet
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomerResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_customers
+      tags:
+        - Customers
+    put:
+      description: Updates a customer.
+      operationId: CustomerUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomerRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCustomerResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_customers
+      tags:
+        - Customers
+    delete:
+      description: Deletes a customer. A customer can't be deleted if they have existing orders.
+      operationId: CustomerDelete
+      responses:
+        '200':
+          description: Success
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_customers
+      tags:
+        - Customers
+  /admin/api/2021-10/customers/{customer_id}/account_activation_url.json:
+    post:
+      description: Generate an account activation URL for a customer whose account is not yet enabled.
+      operationId: CustomerCreateAccountActivationURL
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccountActivationURLResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_customers
+      tags:
+        - Customers
+  /admin/api/2021-10/customers/{customer_id}/send_invite.json:
+    post:
+      description: Sends an account invite to a customer.
+      operationId: CustomerSendAccountInvite
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendAccountInviteRequest'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendAccountInviteResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_customers
+      tags:
+        - Customers
+  /admin/api/2021-10/customers/count.json:
+    get:
+      description: Retrieves a count of all customers.
+      operationId: CustomerCount
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_customers
+      tags:
+        - Customers
+  /admin/api/2021-10/customers/{customer_id}/orders.json:
+    get:
+      description: Retrieves all orders belonging to a customer.
+      operationId: CustomerListOrders
+      parameters:
+        - in: path
+          name: customer_id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomerOrdersResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_customers
+      tags:
+        - Customers
+  /admin/api/2021-10/orders.json:
+    get:
+      description: Retrieves a list of orders.
+      operationId: OrderList
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: string
+          description: Retrieve only orders specified by a comma-separated list of order IDs.
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/since_idParam'
+        - in: query
+          name: created_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Show orders created at or after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: created_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Show orders created at or before date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: updated_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Show orders last updated at or after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: updated_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Show orders last updated at or before date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: processed_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Show orders imported at or after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: processed_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Show orders imported at or before date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: attribution_app_id
+          schema:
+            type: string
+          description: Show orders attributed to a certain app, specified by the app ID. Set as current to show orders for the app currently consuming the API.
+        - in: query
+          name: status
+          description: Filter orders by their status.
+          schema:
+            $ref: '#/components/schemas/ChoiceOfOrderStatus'
+        - in: query
+          name: financial_status
+          description: Filter orders by their financial status.
+          schema:
+            $ref: '#/components/schemas/ChoiceOfOrderFinancial_status'
+        - in: query
+          name: fulfillment_status
+          description: Filter orders by their fulfillment status.
+          schema:
+            $ref: '#/components/schemas/ChoiceOfOrderFulfillment_status'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomerOrdersResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_orders
+      tags:
+        - Orders
+    post:
+      description: Creates an order.
+      operationId: OrderCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/orders/{order_id}.json:
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      description: Retrieves a specific order
+      operationId: OrderGet
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_orders
+      tags:
+        - Orders
+    put:
+      description: Updates an order. It is not for editing the items of an order.
+      operationId: OrderUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_orders
+      tags:
+        - Orders
+    delete:
+      description: Deletes an order. Orders that interact with an online gateway can't be deleted.
+      operationId: OrderDelete
+      responses:
+        '200':
+          description: Success
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/orders/{order_id}/close.json:
+    post:
+      description: Closes an order
+      operationId: OrderClose
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/orders/{order_id}/open.json:
+    post:
+      description: Re-opens a closed order
+      operationId: OrderReopen
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/orders/{order_id}/cancel.json:
+    post:
+      description: Cancels an order. Orders that have a fulfillment object can't be canceled.
+      operationId: OrderCancel
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelOrderRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/orders/{order_id}/transactions.json:
+    parameters:
+      - in: path
+        name: order_id
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      description: Retrieves a list of transactions.
+      operationId: TransactionList
+      parameters:
+        - $ref: '#/components/parameters/since_idParam'
+        - in: query
+          name: in_shop_currency
+          schema:
+            type: boolean
+          description: Show amounts in the shop currency for the underlying transaction.
+        - in: header
+          name: X-Shopify-Api-Features
+          schema:
+            type: string
+            enum:
+              - include-currency-exchange-adjustments
+          description: Required include-currency-exchange-adjustments value to return currency_exchange_adjustment property
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTransactionsResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_orders
+      tags:
+        - Orders
+    post:
+      description: Creates a transaction for an order.
+      operationId: TransactionCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTransactionResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/orders/{order_id}/transactions/count.json:
+    get:
+      description: Retrieves a count of an order's transactions.
+      operationId: TransactionCount
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/orders/{order_id}/transactions/{transaction_id}.json:
+    get:
+      description: Retrieves a specific transaction.
+      operationId: TransactionGet
+      parameters:
+        - in: path
+          name: order_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: transaction_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: header
+          name: X-Shopify-Api-Features
+          schema:
+            type: string
+            enum:
+              - include-currency-exchange-adjustments
+          description: Required include-currency-exchange-adjustments value to return currency_exchange_adjustment property
+        - in: query
+          name: in_shop_currency
+          schema:
+            type: boolean
+          description: Show amounts in the shop currency for the underlying transaction.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTransactionResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_orders
+      tags:
+        - Orders
+  /admin/api/2021-10/products.json:
+    get:
+      description: Retrieves a list of products.
+      operationId: ProductList
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: string
+          description: Return only products specified by a comma-separated list of product IDs.
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/since_idParam'
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Return products by product title.
+        - in: query
+          name: vendor
+          schema:
+            type: string
+          description: Return products by product vendor.
+        - in: query
+          name: handle
+          schema:
+            type: string
+          description: Return only products specified by a comma-separated list of product handles.
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/ChoiceOfStatus'
+          description: Return only products specified by a comma-separated list of statuses. Default any
+        - in: query
+          name: collection_id
+          schema:
+            type: integer
+            format: int64
+          description: Return products by product collection ID.
+        - in: query
+          name: created_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Return products created after a specified date. (format: 2014-04-25T16:15:47-04:00)'
+        - in: query
+          name: created_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Return products created before a specified date. (format: 2014-04-25T16:15:47-04:00)'
+        - in: query
+          name: updated_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Return products last updated after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: updated_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Return products published after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: published_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Return products published after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: published_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Return products published before date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: published_status
+          schema:
+            $ref: '#/components/schemas/ChoiceOfPublished_status'
+          description: Return products with a given published status. Default any.
+        - $ref: '#/components/parameters/presentment_currenciesParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListProductsResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_products
+      tags:
+        - Products
+    post:
+      description: Creates a new product.
+      operationId: ProductCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProductResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_products
+      tags:
+        - Products
+  /admin/api/2021-10/products/count.json:
+    get:
+      description: Retrieves a count of products.
+      operationId: ProductCount
+      parameters:
+        - in: query
+          name: vendor
+          schema:
+            type: string
+          description: Return product count by product title.
+        - in: query
+          name: product_type
+          schema:
+            type: string
+          description: Return product count by product_type
+        - in: query
+          name: collection_id
+          schema:
+            type: integer
+            format: int64
+          description: Return product count by product collection ID.
+        - in: query
+          name: created_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Return product count created after a specified date. (format: 2014-04-25T16:15:47-04:00)'
+        - in: query
+          name: created_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Return product count before a specified date. (format: 2014-04-25T16:15:47-04:00)'
+        - in: query
+          name: updated_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Return product count last updated after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: updated_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Return product count published after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: published_at_min
+          schema:
+            type: string
+            format: date-time
+          description: 'Return product count published after date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: published_at_max
+          schema:
+            type: string
+            format: date-time
+          description: 'Return product count published before date (format: 2014-04-25T16:15:47-04:00).'
+        - in: query
+          name: published_status
+          schema:
+            $ref: '#/components/schemas/ChoiceOfPublished_status'
+          description: Return product count with a given published status. Default any.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_products
+      tags:
+        - Products
+  /admin/api/2021-10/products/{product_id}.json:
+    parameters:
+      - $ref: '#/components/parameters/product_idPathParam'
+    get:
+      description: Retrieves a single product.
+      operationId: ProductGet
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProductResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_products
+      tags:
+        - Products
+    put:
+      description: Updates a product and its variants and images.
+      operationId: ProductUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProductResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_products
+      tags:
+        - Products
+    delete:
+      description: Deletes a product.
+      operationId: ProductDelete
+      responses:
+        '200':
+          description: Success
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_products
+      tags:
+        - Products
+  /admin/api/2021-10/products/{product_id}/variants.json:
+    parameters:
+      - $ref: '#/components/parameters/product_idPathParam'
+    get:
+      description: Retrieves a list of product variants.
+      operationId: ProductVariantList
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/presentment_currenciesParam'
+        - $ref: '#/components/parameters/since_idParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListProductVariantsResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_products
+      tags:
+        - Products
+    post:
+      description: Creates a new product variant
+      operationId: ProductVariantCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductVariantRequest'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProductVariantsResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_products
+      tags:
+        - Products
+  /admin/api/2021-10/products/{product_id}/variants/count.json:
+    parameters:
+      - $ref: '#/components/parameters/product_idPathParam'
+    get:
+      description: Retrieves a count of product variants
+      operationId: ProductVariantCount
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_products
+      tags:
+        - Products
+  /admin/api/2021-10/variants/{variant_id}.json:
+    parameters:
+      - in: path
+        name: variant_id
+        schema:
+          type: integer
+          format: int64
+        required: true
+    get:
+      description: Retrieves a single product variant by ID
+      operationId: ProductVariantGet
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductVariantResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - read_products
+      tags:
+        - Products
+    put:
+      description: Updates an existing product variant
+      operationId: ProductVariantUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductVariantRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProductVariantsResult'
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_products
+      tags:
+        - Products
+  /admin/api/2021-10/products/{product_id}/variants/{variant_id}.json:
+    parameters:
+      - $ref: '#/components/parameters/product_idPathParam'
+      - in: path
+        name: variant_id
+        schema:
+          type: integer
+          format: int64
+        required: true
+    delete:
+      description: Delete a product variant
+      operationId: ProductVariantDelete
+      responses:
+        '200':
+          description: Success
+      security:
+        - basicAuth: []
+        - Oauth2:
+            - write_products
+      tags:
+        - Products
+components:
+  parameters:
+    presentment_currenciesParam:
+      in: query
+      name: presentment_currencies
+      schema:
+        type: string
+      description: Return presentment prices in only certain currencies, specified by a comma-separated list of ISO 4217 currency codes.
+    limitParam:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        maximum: 250
+      description: The amount of results to return. Default 50, maximum 250.
+    since_idParam:
+      in: query
+      name: since_id
+      schema:
+        type: integer
+        format: int64
+      description: Restrict results to after the specified ID.
+    collection_idPathParam:
+      in: path
+      name: collection_id
+      schema:
+        type: integer
+        format: int64
+      required: true
+    product_idPathParam:
+      in: path
+      name: product_id
+      schema:
+        type: integer
+        format: int64
+      required: true
+  schemas:
+    ChoiceOfPublished_status:
+      type: string
+      enum:
+        - published
+        - unpublished
+        - any
+    ChoiceOfStatus:
+      type: string
+      enum:
+        - active
+        - archived
+        - draft
+    CountResult:
+      type: object
+      properties:
+        count:
+          type: integer
+    ChoiceOfPublished_scope:
+      type: string
+      enum:
+        - web
+        - global
+    OptionsProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        product_id:
+          type: number
+        name:
+          type: string
+        position:
+          type: integer
+        values:
+          type: array
+          items:
+            type: string
+    ProductImageProperties:
+      type: object
+      properties:
+        id:
+          type: number
+          description: A unique numeric identifier for the product image.
+        product_id:
+          type: number
+          description: The id of the product associated with the image.
+        positions:
+          type: integer
+          description: The order of the product image in the list. The first product image is at position 1 and is the "main" image for the product.
+        created_at:
+          type: string
+          format: date-time
+          description: The date and time when the product image was created. The API returns this value in ISO 8601 format.
+        updated_at:
+          type: string
+          format: date-time
+          description: The date and time when the product image was last modified. The API returns this value in ISO 8601 format.
+        alt:
+          type: string
+        width:
+          type: integer
+          description: Width dimension of the image which is determined on upload.
+        height:
+          type: integer
+          description: Height dimension of the image which is determined on upload.
+        src:
+          type: string
+          description: Specifies the location of the product image.
+        variant_ids:
+          type: array
+          description: An array of variant ids associated with the image.
+          items:
+            type: number
+        admin_graphql_api_id:
+          type: string
+    CollectionProductProperties:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: An unsigned 64-bit integer that's used as a unique identifier for the product. Each id is unique across the Shopify system. No two products will have the same id, even if they're from different shops.
+        title:
+          type: string
+          description: The name of the product.
+        body_html:
+          type: string
+          description: A description of the product. Supports HTML formatting.
+        vendor:
+          type: string
+          description: The name of the product's vendor.
+        product_type:
+          type: string
+          description: A categorization for the product used for filtering and searching products.
+        created_at:
+          type: string
+          format: date-time
+          description: The date and time (ISO 8601 format) when the product was created.
+        handle:
+          type: string
+          description: A unique human-friendly string for the product. Automatically generated from the product's title. Used by the Liquid templating language to refer to objects.
+        updated_at:
+          type: string
+          format: date-time
+          description: The date and time (ISO 8601 format) when the product was last modified. A product's updated_at value can change for different reasons. For example, if an order is placed for a product that has inventory tracking set up, then the inventory adjustment is counted as an update.
+        published_at:
+          type: string
+          format: date-time
+          description: The date and time (ISO 8601 format) when the product was published. Can be set to null to unpublish the product from the Online Store channel.
+        template_suffix:
+          type: string
+          description: The suffix of the Liquid template used for the product page. If this property is specified, then the product page uses a template called product.suffix.liquid, where suffix is the value of this property. If this property is '""' or null, then the product page uses the default template product.liquid. (default null)
+        published_scope:
+          $ref: '#/components/schemas/ChoiceOfPublished_scope'
+        tags:
+          type: string
+          description: A string of comma-separated tags that are used for filtering and search. A product can have up to 250 tags. Each tag can have up to 255 characters.
+        admin_graphql_api_id:
+          type: string
+        options:
+          type: array
+          description: The custom product property names like Size, Color, and Material. You can add up to 3 options of up to 255 characters each.
+          items:
+            $ref: '#/components/schemas/OptionsProperties'
+        images:
+          type: array
+          description: A list of product image objects, each one representing an image associated with the product.
+          items:
+            $ref: '#/components/schemas/ProductImageProperties'
+        image:
+          $ref: '#/components/schemas/ProductImageProperties'
+    MetafieldsProperties:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          oneOf:
+            - type: string
+            - type: integer
+        value_type:
+          $ref: '#/components/schemas/ChoiceOfListMetafieldsValue_type'
+        namespace:
+          type: string
+        description:
+          type: string
+    ListProductsResult:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListProductsProperties'
+    ListProductsProperties:
+      allOf:
+        - $ref: '#/components/schemas/CollectionProductProperties'
+        - type: object
+          properties:
+            variants:
+              type: array
+              items:
+                $ref: '#/components/schemas/VariantsProperties'
+    VariantsProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        product_id:
+          type: number
+        title:
+          type: string
+        price:
+          type: string
+        sku:
+          type: string
+        position:
+          type: integer
+        inventory_policy:
+          $ref: '#/components/schemas/ChoiceOfInventory_policy'
+        compare_at_price:
+          type: string
+        fulfillment_service:
+          type: string
+        inventory_management:
+          type: string
+        option1:
+          type: string
+        option2:
+          type: string
+        option3:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        taxable:
+          type: boolean
+        barcode:
+          type: string
+        grams:
+          type: integer
+        image_id:
+          type: number
+        weight:
+          type: number
+        weight_unit:
+          type: string
+        inventory_item_id:
+          type: number
+        inventory_quantity:
+          type: integer
+        old_inventory_quantity:
+          type: integer
+        presentment_prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Presentment_pricesProperties'
+        requires_shipping:
+          type: boolean
+        admin_graphql_api_id:
+          type: string
+    ChoiceOfInventory_policy:
+      type: string
+      enum:
+        - deny
+        - continue
+    Presentment_pricesProperties:
+      type: object
+      properties:
+        price:
+          $ref: '#/components/schemas/PriceProperties'
+        compare_at_price:
+          $ref: '#/components/schemas/PriceProperties'
+    PriceProperties:
+      type: object
+      properties:
+        currency_code:
+          type: string
+        amount:
+          type: string
+    CreateProductRequest:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/CreateProductRequestProperties'
+    CreateProductRequestProperties:
+      type: object
+      properties:
+        title:
+          type: string
+        body_html:
+          type: string
+        vendor:
+          type: string
+        product_type:
+          type: string
+        tags:
+          type: string
+        published:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/ChoiceOfStatus'
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateProductRequestVariants'
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateProductRequestOptions'
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateProductRequestImages'
+        metafields:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetafieldsProperties'
+        metafields_global_title_tag:
+          type: string
+        metafields_global_description_tag:
+          type: string
+    CreateProductRequestVariants:
+      type: object
+      properties:
+        option1:
+          type: string
+        price:
+          type: string
+        sku:
+          type: string
+    CreateProductRequestOptions:
+      type: object
+      properties:
+        name:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    CreateProductRequestImages:
+      type: object
+      properties:
+        attachment:
+          type: string
+        src:
+          type: string
+    CreateProductResult:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/ListProductsProperties'
+    UpdateProductRequest:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/UpdateProductProperties'
+    UpdateProductProperties:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: An unsigned 64-bit integer that's used as a unique identifier for the product. Each id is unique across the Shopify system. No two products will have the same id, even if they're from different shops.
+        title:
+          type: string
+          description: The name of the product.
+        body_html:
+          type: string
+          description: A description of the product. Supports HTML formatting.
+        vendor:
+          type: string
+          description: The name of the product's vendor.
+        product_type:
+          type: string
+          description: A categorization for the product used for filtering and searching products.
+        published_at:
+          type: string
+          format: date-time
+          description: The date and time (ISO 8601 format) when the product was published. Can be set to null to unpublish the product from the Online Store channel.
+        template_suffix:
+          type: string
+          description: The suffix of the Liquid template used for the product page. If this property is specified, then the product page uses a template called product.suffix.liquid, where suffix is the value of this property. If this property is '""' or null, then the product page uses the default template product.liquid. (default null)
+        published_scope:
+          $ref: '#/components/schemas/ChoiceOfPublished_scope'
+        tags:
+          type: string
+          description: A string of comma-separated tags that are used for filtering and search. A product can have up to 250 tags. Each tag can have up to 255 characters.
+        options:
+          type: array
+          description: The custom product property names like Size, Color, and Material. You can add up to 3 options of up to 255 characters each.
+          items:
+            $ref: '#/components/schemas/OptionsProperties'
+        images:
+          type: array
+          description: A list of product image objects, each one representing an image associated with the product.
+          items:
+            $ref: '#/components/schemas/UpdateProductImageProperties'
+        image:
+          $ref: '#/components/schemas/UpdateProductImageProperties'
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpdateProductRequestVariants'
+        metafields_global_title_tag:
+          type: string
+        metafields_global_description_tag:
+          type: string
+    UpdateProductImageProperties:
+      type: object
+      properties:
+        id:
+          type: number
+          description: A unique numeric identifier for the product image.
+        product_id:
+          type: number
+          description: The id of the product associated with the image.
+        position:
+          type: integer
+          description: The order of the product image in the list. The first product image is at position 1 and is the "main" image for the product.
+        alt:
+          type: string
+        width:
+          type: integer
+          description: Width dimension of the image which is determined on upload.
+        height:
+          type: integer
+          description: Height dimension of the image which is determined on upload.
+        src:
+          type: string
+          description: Specifies the location of the product image.
+        variant_ids:
+          type: array
+          description: An array of variant ids associated with the image.
+          items:
+            type: number
+    UpdateProductRequestVariants:
+      type: object
+      properties:
+        id:
+          type: number
+        product_id:
+          type: number
+        title:
+          type: string
+        price:
+          type: string
+        sku:
+          type: string
+        position:
+          type: integer
+        inventory_policy:
+          $ref: '#/components/schemas/ChoiceOfInventory_policy'
+        compare_at_price:
+          type: string
+        fulfillment_service:
+          type: string
+        inventory_management:
+          type: string
+        option1:
+          type: string
+        option2:
+          type: string
+        option3:
+          type: string
+        taxable:
+          type: boolean
+        barcode:
+          type: string
+        grams:
+          type: integer
+        image_id:
+          type: number
+        weight:
+          type: number
+        weight_unit:
+          type: string
+        inventory_item_id:
+          type: number
+        inventory_quantity:
+          type: integer
+        old_inventory_quantity:
+          type: integer
+        presentment_prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Presentment_pricesProperties'
+        requires_shipping:
+          type: boolean
+    ListProductVariantsResult:
+      type: object
+      properties:
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantsProperties'
+    CreateProductVariantRequest:
+      type: object
+      properties:
+        variant:
+          $ref: '#/components/schemas/CreateProductVariantRequestProperties'
+    CreateProductVariantRequestProperties:
+      type: object
+      properties:
+        price:
+          type: string
+        sku:
+          type: string
+        position:
+          type: integer
+        inventory_policy:
+          $ref: '#/components/schemas/ChoiceOfInventory_policy'
+        compare_at_price:
+          type: string
+        fulfillment_service:
+          type: string
+        inventory_management:
+          type: string
+        option1:
+          type: string
+        option2:
+          type: string
+        option3:
+          type: string
+        taxable:
+          type: boolean
+        barcode:
+          type: string
+        grams:
+          type: integer
+        image_id:
+          type: number
+        weight:
+          type: number
+        weight_unit:
+          type: string
+        inventory_item_id:
+          type: number
+        metafields:
+          $ref: '#/components/schemas/MetafieldsProperties'
+    CreateProductVariantsResult:
+      type: object
+      properties:
+        variant:
+          $ref: '#/components/schemas/VariantsProperties'
+    GetProductVariantResult:
+      type: object
+      properties:
+        variant:
+          allOf:
+            - $ref: '#/components/schemas/VariantsProperties'
+            - type: object
+              properties:
+                tax_code:
+                  type: string
+                  description: This parameter applies only to the stores that have the Avalara AvaTax app installed. Specifies the Avalara tax code for the product variant.
+    UpdateProductVariantRequest:
+      type: object
+      properties:
+        variant:
+          $ref: '#/components/schemas/UpdateProductVariantRequestProperties'
+    UpdateProductVariantRequestProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        product_id:
+          type: number
+        price:
+          type: string
+        sku:
+          type: string
+        inventory_policy:
+          $ref: '#/components/schemas/ChoiceOfInventory_policy'
+        compare_at_price:
+          type: string
+        fulfillment_service:
+          type: string
+        inventory_management:
+          type: string
+        option1:
+          type: string
+        option2:
+          type: string
+        option3:
+          type: string
+        taxable:
+          type: boolean
+        barcode:
+          type: string
+        grams:
+          type: integer
+        image_id:
+          type: number
+        weight:
+          type: number
+        weight_unit:
+          type: string
+        inventory_item_id:
+          type: number
+        metafields:
+          $ref: '#/components/schemas/MetafieldsProperties'
+    ListCustomersResult:
+      type: object
+      properties:
+        customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomersResultProperties'
+    CustomersResultProperties:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+        accepts_marketing:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        first_name:
+          type: string
+        last_name:
+          type: string
+        orders_count:
+          type: integer
+        sms_marketing_consent:
+          type: object
+          properties:
+            state:
+              type: string
+            opt_in_level:
+              type: string
+            consent_updated_at:
+              type: string
+            consent_collected_from:
+              type: string
+        state:
+          $ref: '#/components/schemas/ChoiceOfState'
+        total_spent:
+          type: number
+        last_order_id:
+          type: number
+        note:
+          type: string
+          nullable: true
+        verified_email:
+          type: boolean
+        multipass_identifier:
+          type: string
+        tax_exempt:
+          type: boolean
+        phone:
+          type: string
+        tags:
+          type: string
+        last_order_name:
+          type: string
+        currency:
+          type: string
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressResultProperties'
+        accepts_marketing_updated_at:
+          type: string
+          format: date-time
+        marketing_opt_in_level:
+          $ref: '#/components/schemas/ChoiceOfMarketing_opt_in_level'
+        tax_exemptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChoiceOfTax_exemptions'
+        admin_graphql_api_id:
+          type: string
+        default_address:
+          $ref: '#/components/schemas/AddressResultProperties'
+    ChoiceOfState:
+      type: string
+      enum:
+        - disabled
+        - invited
+        - enabled
+        - declined
+    ChoiceOfMarketing_opt_in_level:
+      type: string
+      nullable: true
+      enum:
+        - single_opt_in
+        - confirmed_opt_in
+        - unknown
+    ChoiceOfTax_exemptions:
+      type: string
+      enum:
+        - EXEMPT_ALL
+        - CA_STATUS_CARD_EXEMPTION
+        - CA_DIPLOMAT_EXEMPTION
+        - CA_BC_RESELLER_EXEMPTION
+        - CA_MB_RESELLER_EXEMPTION
+        - CA_SK_RESELLER_EXEMPTION
+        - CA_BC_COMMERCIAL_FISHERY_EXEMPTION
+        - CA_MB_COMMERCIAL_FISHERY_EXEMPTION
+        - CA_NS_COMMERCIAL_FISHERY_EXEMPTION
+        - CA_PE_COMMERCIAL_FISHERY_EXEMPTION
+        - CA_SK_COMMERCIAL_FISHERY_EXEMPTION
+        - CA_BC_PRODUCTION_AND_MACHINERY_EXEMPTION
+        - CA_SK_PRODUCTION_AND_MACHINERY_EXEMPTION
+        - CA_BC_SUB_CONTRACTOR_EXEMPTION
+        - CA_SK_SUB_CONTRACTOR_EXEMPTION
+        - CA_BC_CONTRACTOR_EXEMPTION
+        - CA_SK_CONTRACTOR_EXEMPTION
+        - CA_ON_PURCHASE_EXEMPTION
+        - CA_MB_FARMER_EXEMPTION
+        - CA_NS_FARMER_EXEMPTION
+        - CA_SK_FARMER_EXEMPTION
+    AddressResultProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        customer_id:
+          type: number
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+        zip:
+          type: string
+        phone:
+          type: string
+        name:
+          type: string
+        province_code:
+          type: string
+        country_code:
+          type: string
+        country_name:
+          type: string
+        default:
+          type: boolean
+    CreateCustomerRequest:
+      type: object
+      properties:
+        customer:
+          $ref: '#/components/schemas/CustomerRequestProperties'
+    CustomerRequestProperties:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        note:
+          type: string
+        verified_email:
+          type: boolean
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerAddressRequestProperties'
+        metafields:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetafieldsProperties'
+        password:
+          type: string
+        password_confirmation:
+          type: string
+        send_email_welcome:
+          type: boolean
+        send_email_invite:
+          type: boolean
+    CustomerAddressRequestProperties:
+      type: object
+      properties:
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        province:
+          type: string
+        phone:
+          type: string
+        zip:
+          type: string
+        last_name:
+          type: string
+        first_name:
+          type: string
+        country:
+          type: string
+        company:
+          type: string
+    CreateCustomerResult:
+      type: object
+      properties:
+        customer:
+          $ref: '#/components/schemas/CustomersResultProperties'
+    UpdateCustomerRequest:
+      type: object
+      properties:
+        customer:
+          $ref: '#/components/schemas/UpdateCustomerRequestProperties'
+    UpdateCustomerRequestProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        email:
+          type: string
+        accepts_marketing:
+          type: boolean
+        first_name:
+          type: string
+        last_name:
+          type: string
+        note:
+          type: string
+          nullable: true
+        multipass_identifier:
+          type: string
+        tax_exempt:
+          type: boolean
+        phone:
+          type: string
+        tags:
+          type: string
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/UpdateAddressRequestProperties'
+        accepts_marketing_updated_at:
+          type: string
+          format: date-time
+        marketing_opt_in_level:
+          $ref: '#/components/schemas/ChoiceOfMarketing_opt_in_level'
+        tax_exemptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChoiceOfTax_exemptions'
+        metafields:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetafieldsProperties'
+    UpdateAddressRequestProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        first_name:
+          type: string
+        last_name:
+          type: string
+        company:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+        zip:
+          type: string
+        phone:
+          type: string
+        default:
+          type: boolean
+    CreateAccountActivationURLResult:
+      type: object
+      properties:
+        account_activation_url:
+          type: string
+    SendAccountInviteRequest:
+      type: object
+      properties:
+        customer_invite:
+          $ref: '#/components/schemas/Customer_inviteRequestProperties'
+    Customer_inviteRequestProperties:
+      type: object
+      properties:
+        to:
+          type: string
+        from:
+          type: string
+        bcc:
+          type: array
+          items:
+            type: string
+        subject:
+          type: string
+        custom_message:
+          type: string
+    SendAccountInviteResult:
+      type: object
+      properties:
+        customer_invite:
+          $ref: '#/components/schemas/Customer_inviteRequestProperties'
+    ListCustomerOrdersResult:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerOrdersResultProperties'
+    CustomerOrdersResultProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        email:
+          type: string
+        closed_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        number:
+          type: integer
+        note:
+          type: string
+          nullable: true
+        token:
+          type: string
+        gateway:
+          type: string
+        test:
+          type: boolean
+        total_price:
+          type: string
+        subtotal_price:
+          type: string
+        total_weight:
+          type: number
+        total_tax:
+          type: number
+        taxes_included:
+          type: boolean
+        currency:
+          type: string
+        estimated_taxes:
+          type: boolean
+        financial_status:
+          type: string
+        confirmed:
+          type: boolean
+        total_discounts:
+          type: number
+        total_line_items_price:
+          type: string
+        cart_token:
+          type: string
+        buyer_accepts_marketing:
+          type: boolean
+        name:
+          type: string
+        referring_site:
+          type: string
+        landing_site:
+          type: string
+        cancelled_at:
+          type: string
+          format: date-time
+          nullable: true
+        cancel_reason:
+          type: string
+          nullable: true
+        total_price_usd:
+          type: string
+        checkout_token:
+          type: string
+        reference:
+          type: string
+        user_id:
+          type: number
+          nullable: true
+        location_id:
+          type: number
+          nullable: true
+        source_identifier:
+          type: string
+        source_url:
+          type: string
+          nullable: true
+        processed_at:
+          type: string
+          format: date-time
+        device_id:
+          type: number
+          nullable: true
+        phone:
+          type: string
+        customer_locale:
+          type: string
+          nullable: true
+        app_id:
+          type: string
+          nullable: true
+        browser_ip:
+          type: string
+        client_details:
+          $ref: '#/components/schemas/Client_detailsProperties'
+        landing_site_ref:
+          type: string
+        order_number:
+          type: number
+        discount_applications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount_applicationsProperties'
+        discount_codes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount_codesProperties'
+        note_attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note_attributesProperties'
+        payment_details:
+          $ref: '#/components/schemas/OrderPayment_detailsProperties'
+        payment_gateway_names:
+          type: array
+          items:
+            type: string
+        processing_method:
+          type: string
+        checkout_id:
+          type: number
+        source_name:
+          type: string
+        fulfillment_status:
+          type: string
+          nullable: true
+        tax_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax_linesProperties'
+        tags:
+          type: string
+        contact_email:
+          type: string
+        order_status_url:
+          type: string
+        presentment_currency:
+          type: string
+        payment_terms:
+          $ref: '#/components/schemas/Payment_termsProperties'
+        total_line_items_price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        total_discounts_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        total_shipping_price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        subtotal_price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        total_price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        total_tax_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        line_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Line_itemProperties'
+        fulfillments:
+          type: array
+          items:
+            $ref: '#/components/schemas/FulfillmentsProperties'
+        refunds:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefundsProperties'
+        total_tip_received:
+          type: number
+        original_total_duties_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        current_total_duties_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        admin_graphql_api_id:
+          type: string
+        shipping_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shipping_linesProperties'
+        billing_address:
+          $ref: '#/components/schemas/Shipping_addressProperties'
+        shipping_address:
+          $ref: '#/components/schemas/Shipping_addressProperties'
+        customer:
+          $ref: '#/components/schemas/CustomersResultProperties'
+    Shipping_addressProperties:
+      type: object
+      properties:
+        first_name:
+          type: string
+        address1:
+          type: string
+        phone:
+          type: string
+        city:
+          type: string
+        zip:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+        last_name:
+          type: string
+        address2:
+          type: string
+        company:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        name:
+          type: string
+        country_code:
+          type: string
+        province_code:
+          type: string
+    Shipping_linesProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        price:
+          type: string
+        code:
+          type: string
+        source:
+          type: string
+        phone:
+          type: string
+        requested_fulfillment_service_id:
+          type: number
+        delivery_category:
+          type: string
+        carrier_identifier:
+          type: string
+        discounted_price:
+          type: string
+        price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        discounted_price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        discount_allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount_allocationsProperties'
+        tax_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax_linesProperties'
+    Price_setProperties:
+      type: object
+      properties:
+        shop_money:
+          $ref: '#/components/schemas/Shop_moneyProperties'
+        presentment_money:
+          $ref: '#/components/schemas/Shop_moneyProperties'
+    Payment_termsProperties:
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+        due_in_days:
+          type: number
+        payment_terms_name:
+          type: string
+        payment_terms_type:
+          type: string
+        payment_schedules:
+          $ref: '#/components/schemas/Payment_schedulesProperties'
+    Payment_schedulesProperties:
+      type: array
+      items:
+        $ref: '#/components/schemas/Payment_schedulesProperty'
+    Payment_schedulesProperty:
+      type: object
+      properties:
+        amount:
+          type: number
+        due_at:
+          type: string
+        currency:
+          type: string
+        issued_at:
+          type: string
+        completed_at:
+          type: string
+        expected_payment_method:
+          type: string
+    Shop_moneyProperties:
+      type: object
+      properties:
+        amount:
+          type: string
+        currency_code:
+          type: string
+    Discount_allocationsProperties:
+      type: object
+      properties:
+        amount:
+          type: string
+        discount_application_index:
+          type: integer
+        amount_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        presentment_money:
+          $ref: '#/components/schemas/Price_setProperties'
+    Tax_linesProperties:
+      type: object
+      properties:
+        title:
+          type: string
+        price:
+          type: string
+        rate:
+          type: number
+        price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+    RefundsProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        order_id:
+          type: number
+        created_at:
+          type: string
+          format: date-time
+        note:
+          type: string
+        user_id:
+          type: number
+        processed_at:
+          type: string
+          format: date-time
+        restock:
+          type: boolean
+        duties:
+          type: array
+          items:
+            $ref: '#/components/schemas/DutiesProperties'
+        total_duties_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        admin_graphql_api_id:
+          type: string
+        refund_line_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Refund_line_itemsProperties'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionsProperties'
+        order_adjustments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order_adjustmentsProperties'
+    Order_adjustmentsProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        order_id:
+          type: number
+        refund_id:
+          type: number
+        amount:
+          type: string
+        tax_amount:
+          type: string
+        kind:
+          $ref: '#/components/schemas/ChoiceOfOrder_adjustmentsKind'
+        reason:
+          type: string
+        amount_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        tax_amount_set:
+          $ref: '#/components/schemas/Price_setProperties'
+    ChoiceOfOrder_adjustmentsKind:
+      type: string
+      enum:
+        - shipping_refund
+        - refund_discrepancy
+    TransactionsProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        order_id:
+          type: number
+        kind:
+          $ref: '#/components/schemas/ChoiceOfTransactionsKind'
+        gateway:
+          type: string
+        status:
+          $ref: '#/components/schemas/ChoiceOfTransactionsStatus'
+        message:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        test:
+          type: boolean
+        authorization:
+          type: string
+        location_id:
+          type: number
+        user_id:
+          type: number
+        parent_id:
+          type: number
+        payments_refund_attributes:
+          type: object
+          properties:
+            status:
+              type: string
+            acquirer_reference_number:
+              type: string
+        processed_at:
+          type: string
+          format: date-time
+        device_id:
+          type: number
+        error_code:
+          $ref: '#/components/schemas/ChoiceOfTransactionsError_code'
+        source_name:
+          type: string
+        receipt:
+          $ref: '#/components/schemas/ReceiptProperties'
+        amount:
+          type: string
+        currency:
+          type: string
+        admin_graphql_api_id:
+          type: string
+    ReceiptProperties:
+      type: object
+      properties:
+        testcase:
+          type: boolean
+        authorization:
+          type: string
+    ChoiceOfTransactionsError_code:
+      type: string
+      enum:
+        - incorrect_number
+        - invalid_number
+        - invalid_expiry_date
+        - invalid_cvc
+        - expired_card
+        - incorrect_cvc
+        - incorrect_zip
+        - incorrect_address
+        - card_declined
+        - processing_error
+        - call_issuer
+        - pick_up_card
+    ChoiceOfTransactionsKind:
+      type: string
+      enum:
+        - authorization
+        - capture
+        - sale
+        - void
+        - refund
+    ChoiceOfTransactionsStatus:
+      type: string
+      enum:
+        - pending
+        - failure
+        - success
+        - error
+    Refund_line_itemsProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        quantity:
+          type: integer
+        line_item_id:
+          type: number
+        location_id:
+          type: number
+        restock_type:
+          $ref: '#/components/schemas/ChoiceOfTransactionsRestock_type'
+        subtotal:
+          type: number
+        total_tax:
+          type: number
+        subtotal_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        total_tax_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        line_item:
+          $ref: '#/components/schemas/Line_itemProperties'
+    Line_itemProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        variant_id:
+          type: number
+        title:
+          type: string
+        quantity:
+          type: integer
+        sku:
+          type: string
+        variant_title:
+          type: string
+        vendor:
+          type: string
+        fulfillment_service:
+          type: string
+        product_id:
+          type: number
+        requires_shipping:
+          type: boolean
+        taxable:
+          type: boolean
+        gift_card:
+          type: boolean
+        name:
+          type: string
+        variant_inventory_management:
+          type: string
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Line_itemPropertiesProperties'
+        product_exists:
+          type: boolean
+        fulfillable_quantity:
+          type: integer
+        grams:
+          type: integer
+        price:
+          type: string
+        total_discount:
+          type: number
+        fulfillment_status:
+          $ref: '#/components/schemas/ChoiceOfLine_itemFulfillment_status'
+        price_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        total_discount_set:
+          $ref: '#/components/schemas/Price_setProperties'
+        discount_allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount_allocationsProperties'
+        duties:
+          type: array
+          items:
+            $ref: '#/components/schemas/Line_itemDutiesProperties'
+        admin_graphql_api_id:
+          type: string
+        tax_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tax_linesProperties'
+    ChoiceOfLine_itemFulfillment_status:
+      type: string
+      enum:
+        - fulfilled
+        - partial
+    Line_itemPropertiesProperties:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    Line_itemDutiesProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        harmonized_system_code:
+          type: string
+        country_code_of_origin:
+          type: string
+        shop_money:
+          $ref: '#/components/schemas/Shop_moneyProperties'
+        presentment_money:
+          $ref: '#/components/schemas/Shop_moneyProperties'
+        tax_lines:
+          $ref: '#/components/schemas/Tax_linesProperties'
+        admin_graphql_api_id:
+          type: string
+    ChoiceOfTransactionsRestock_type:
+      type: string
+      enum:
+        - no_restock
+        - cancel
+        - return
+        - legacy_restock
+    DutiesProperties:
+      type: object
+      properties:
+        duty_id:
+          type: number
+        amount_set:
+          $ref: '#/components/schemas/Price_setProperties'
+    FulfillmentsProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        order_id:
+          type: number
+        status:
+          $ref: '#/components/schemas/ChoiceOfFulfillment_status'
+        created_at:
+          type: string
+          format: date-time
+        service:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+        tracking_company:
+          type: string
+        shipment_status:
+          $ref: '#/components/schemas/ChoiceOfShipment_status'
+        location_id:
+          type: number
+        line_items:
+          $ref: '#/components/schemas/Line_itemProperties'
+        tracking_number:
+          type: string
+        tracking_numbers:
+          type: array
+          items:
+            type: string
+        tracking_url:
+          type: string
+        tracking_urls:
+          type: array
+          items:
+            type: string
+        receipt:
+          $ref: '#/components/schemas/ReceiptProperties'
+        name:
+          type: string
+        admin_graphql_api_id:
+          type: string
+    ChoiceOfShipment_status:
+      type: string
+      enum:
+        - label_printed
+        - label_purchased
+        - attempted_delivery
+        - ready_for_pickup
+        - confirmed
+        - in_transit
+        - out_for_delivery
+        - delivered
+        - failure
+    ChoiceOfFulfillment_status:
+      type: string
+      enum:
+        - pending
+        - open
+        - success
+        - canceled
+        - error
+        - failure
+    OrderPayment_detailsProperties:
+      type: object
+      properties:
+        credit_card_bin:
+          type: string
+        avs_result_code:
+          type: string
+        cvv_result_code:
+          type: string
+        credit_card_number:
+          type: string
+        credit_card_company:
+          type: string
+        credit_card_name:
+          type: string
+        credit_card_wallet:
+          type: string
+        credit_card_expiration_month:
+          type: integer
+        credit_card_expiration_year:
+          type: integer
+    Note_attributesProperties:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+    Discount_codesProperties:
+      type: object
+      properties:
+        code:
+          type: string
+        amount:
+          type: string
+        type:
+          $ref: '#/components/schemas/ChoiceOfDiscount_codesType'
+    ChoiceOfDiscount_codesType:
+      type: string
+      enum:
+        - fixed_amount
+        - percentage
+        - shipping
+    ChoiceOfDiscount_applicationsType:
+      type: string
+      enum:
+        - automatic
+        - discount_code
+        - manual
+        - script
+    ChoiceOfDiscount_applicationsValue_type:
+      type: string
+      enum:
+        - fixed_amount
+        - percentage
+    ChoiceOfDiscount_applicationsAllocation_method:
+      type: string
+      enum:
+        - across
+        - each
+        - one
+    ChoiceOfDiscount_applicationsTarget_selection:
+      type: string
+      enum:
+        - all
+        - entitled
+        - explicit
+    ChoiceOfDiscount_applicationsTarget_type:
+      type: string
+      enum:
+        - line_item
+        - shipping_line
+    Discount_applicationsProperties:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/ChoiceOfDiscount_applicationsType'
+        value:
+          type: string
+        value_type:
+          $ref: '#/components/schemas/ChoiceOfDiscount_applicationsValue_type'
+        allocation_method:
+          $ref: '#/components/schemas/ChoiceOfDiscount_applicationsAllocation_method'
+        target_selection:
+          $ref: '#/components/schemas/ChoiceOfDiscount_applicationsTarget_selection'
+        target_type:
+          $ref: '#/components/schemas/ChoiceOfDiscount_applicationsTarget_type'
+        code:
+          type: string
+    Client_detailsProperties:
+      type: object
+      properties:
+        accept_language:
+          type: string
+        browser_height:
+          type: integer
+        browser_ip:
+          type: string
+        browser_width:
+          type: integer
+        session_hash:
+          type: string
+        user_agent:
+          type: string
+    DraftOrderTax_linesProperties:
+      type: object
+      properties:
+        title:
+          type: string
+        price:
+          type: string
+        rate:
+          type: number
+    ChoiceOfOrderStatus:
+      type: string
+      enum:
+        - open
+        - closed
+        - cancelled
+        - any
+    ChoiceOfOrderFinancial_status:
+      type: string
+      enum:
+        - authorized
+        - pending
+        - paid
+        - partially_paid
+        - refunded
+        - voided
+        - partially_refunded
+        - any
+        - unpaid
+    ChoiceOfOrderFulfillment_status:
+      type: string
+      enum:
+        - shipped
+        - partial
+        - unshipped
+        - any
+        - unfulfilled
+    CreateOrderRequest:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/OrderRequestProperties'
+    OrderRequestProperties:
+      type: object
+      properties:
+        email:
+          type: string
+        fulfillment_status:
+          $ref: '#/components/schemas/OrderFulfillment_statusProperties'
+        fulfillments:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderFulfillmentsProperties'
+        send_receipt:
+          type: boolean
+        send_fulfillment_receipt:
+          type: boolean
+        phone:
+          type: string
+        line_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLine_itemRequestProperties'
+        billing_address:
+          $ref: '#/components/schemas/OrderBilling_addressRequestProperties'
+        shipping_address:
+          $ref: '#/components/schemas/OrderBilling_addressRequestProperties'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderTransactionsRequestProperties'
+        financial_status:
+          $ref: '#/components/schemas/ChoiceOfOrderFinancial_status'
+        discount_codes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Discount_codesProperties'
+        customer:
+          $ref: '#/components/schemas/OrderCustomerRequestProperties'
+        tax_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/DraftOrderTax_linesProperties'
+        total_tax:
+          type: number
+        currency:
+          type: string
+        note:
+          type: string
+        note_attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note_attributesProperties'
+        buyer_accepts_marketing:
+          type: boolean
+        tags:
+          type: string
+        test:
+          type: boolean
+    OrderFulfillmentsProperties:
+      type: object
+      properties:
+        location_id:
+          type: number
+    OrderCustomerRequestProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        tags:
+          type: string
+        note:
+          type: string
+    OrderTransactionsRequestProperties:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/ChoiceOfTransactionsKind'
+        status:
+          $ref: '#/components/schemas/ChoiceOfTransactionsStatus'
+        amount:
+          type: number
+    OrderBilling_addressRequestProperties:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        address1:
+          type: string
+        phone:
+          type: string
+        city:
+          type: string
+        zip:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+        address2:
+          type: string
+        company:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+    OrderLine_itemRequestProperties:
+      type: object
+      properties:
+        title:
+          type: string
+        price:
+          type: string
+        grams:
+          type: integer
+        quantity:
+          type: integer
+        taxable:
+          type: boolean
+        variant_id:
+          type: number
+        gift_card:
+          type: boolean
+        sku:
+          type: string
+        tax_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/DraftOrderTax_linesProperties'
+    OrderFulfillment_statusProperties:
+      type: string
+      enum:
+        - fulfilled
+        - partial
+        - restocked
+    CreateOrderResult:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/CustomerOrdersResultProperties'
+    UpdateOrderRequest:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/UpdateOrderRequestProperties'
+    UpdateOrderRequestProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        buyer_accepts_marketing:
+          type: boolean
+        phone:
+          type: string
+        email:
+          type: string
+        note:
+          type: string
+        note_attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note_attributesProperties'
+        metafields:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetafieldsProperties'
+        shipping_address:
+          $ref: '#/components/schemas/OrderBilling_addressRequestProperties'
+        customer:
+          nullable: true
+        tags:
+          type: string
+    CancelOrderRequest:
+      type: object
+      properties:
+        amount:
+          type: string
+        currency:
+          type: string
+        reason:
+          $ref: '#/components/schemas/ChoiceOfReason'
+        email:
+          type: boolean
+        refund:
+          $ref: '#/components/schemas/CancelOrderRefundProperties'
+    CancelOrderRefundProperties:
+      type: object
+      properties:
+        note:
+          type: string
+        shipping:
+          $ref: '#/components/schemas/CancelOrderRefundShippingProperties'
+        refund_line_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CancelOrderRefund_line_itemsProperties'
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CancelOrderTransactionsProperties'
+    CancelOrderTransactionsProperties:
+      type: object
+      properties:
+        parent_id:
+          type: number
+        amount:
+          type: string
+        kind:
+          type: string
+          enum:
+            - refund
+        gateway:
+          type: string
+    CancelOrderRefund_line_itemsProperties:
+      type: object
+      properties:
+        line_item_id:
+          type: number
+        quantity:
+          type: integer
+        restock_type:
+          $ref: '#/components/schemas/ChoiceOfTransactionsRestock_type'
+        location_id:
+          type: number
+    CancelOrderRefundShippingProperties:
+      type: object
+      properties:
+        full_refund:
+          type: boolean
+        amount:
+          type: string
+    ChoiceOfReason:
+      type: string
+      enum:
+        - customer
+        - inventory
+        - fraud
+        - declined
+        - other
+    ListTransactionsResult:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/TransactionsProperties'
+              - type: object
+                properties:
+                  currency_exchange_adjustment:
+                    $ref: '#/components/schemas/Currency_exchange_adjustmentProperties'
+    Currency_exchange_adjustmentProperties:
+      type: object
+      properties:
+        id:
+          type: number
+        adjustment:
+          type: string
+        original_amount:
+          type: string
+        final_amount:
+          type: string
+        currency:
+          type: string
+    CreateTransactionRequest:
+      type: object
+      properties:
+        transaction:
+          $ref: '#/components/schemas/CreateTransactionRequestProperties'
+    CreateTransactionRequestProperties:
+      type: object
+      properties:
+        currency:
+          type: string
+        amount:
+          type: string
+        kind:
+          $ref: '#/components/schemas/ChoiceOfTransactionsKind'
+        parent_id:
+          type: number
+        test:
+          type: boolean
+        authorization:
+          type: string
+    CreateTransactionResult:
+      type: object
+      properties:
+        transaction:
+          allOf:
+            - $ref: '#/components/schemas/TransactionsProperties'
+            - type: object
+              properties:
+                currency_exchange_adjustment:
+                  $ref: '#/components/schemas/Currency_exchange_adjustmentProperties'
+    GetTransactionResult:
+      type: object
+      properties:
+        transaction:
+          allOf:
+            - $ref: '#/components/schemas/TransactionsProperties'
+            - type: object
+              properties:
+                currency_exchange_adjustment:
+                  $ref: '#/components/schemas/Currency_exchange_adjustmentProperties'
+                extended_authorization_attributes:
+                  $ref: '#/components/schemas/Extended_authorization_attributesProperties'
+    Extended_authorization_attributesProperties:
+      type: object
+      properties:
+        standard_authorization_expires_at:
+          type: string
+          format: date-time
+        extended_authorization_expires_at:
+          type: string
+          format: date-time
+    ChoiceOfListMetafieldsValue_type:
+      type: string
+      enum:
+        - string
+        - integer
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    Oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://{shop}.myshopify.com/admin/oauth/authorize
+          tokenUrl: https://{shop}.myshopify.com/admin/oauth/access_token
+          scopes:
+            read_products: Access to Product, Product Variant, Product Image, Collect, Custom Collection, and Smart Collection.
+            write_products: Access to Product, Product Variant, Product Image, Collect, Custom Collection, and Smart Collection.
+            read_customers: Access to Customer and Saved Search.
+            write_customers: Access to Customer and Saved Search.
+            read_orders: Access to Abandoned checkouts, Customer, Fulfillment, Order, and Transaction.
+            write_orders: Access to Abandoned checkouts, Customer, Fulfillment, Order, and Transaction.
+            read_all_orders: Grants access to all orders rather than the default window of 60 days worth of orders. This OAuth scope is used in conjunction with read_orders, or write_orders. You need to request this scope from your Partner Dashboard before adding it to your app.

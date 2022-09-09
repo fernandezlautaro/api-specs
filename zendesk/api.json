@@ -1,0 +1,2379 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v2",
+    "title": "Zendesk",
+    "description": "Zendesk is a platform that is used to automate and enhance the customer support for many businesses",
+    "contact": {}
+  },
+  "host": "https://{subdomain}.zendesk.com",
+  "basePath": "/api/{apiVersion}",
+  "securityDefinitions": {
+    "Basic Authentication": {
+      "type": "basic"
+    },
+    "Api Token": {
+      "type": "apiKey",
+      "description": "Expected Base64 encoded string with following content: '{email_address}/token:{api_token}'",
+      "name": "Authorization",
+      "in": "header"
+    },
+    "OAuth2 Access Code": {
+      "type": "oauth2",
+      "tokenUrl": "https://{subdomain}.zendesk.com/oauth/tokens",
+      "authorizationUrl": "https://{subdomain}.zendesk.com/oauth/authorizations/new",
+      "flow": "accessCode",
+      "scopes": {
+        "read": "Grants read access",
+        "write": "Grants write access"
+      }
+    }
+  },
+  "schemes": [
+      "https"
+  ],
+  "consumes": [
+      "application/json"
+  ],
+  "produces": [
+      "application/json"
+  ],
+  "paths": {
+    "/uploads.json": {
+      "post": {
+        "description": "Adding multiple attachments to the same upload is handled by splitting requests and passing the API token received from the first request to each subsequent request.\n Allowed For: [End Users]\n",
+        "summary": "Upload Attachment",
+        "tags": [
+            "uploads"
+        ],
+        "operationId": "UploadAttachment",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Attachment file name"
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Token"
+          },
+          {
+            "name": "uploaded_data",
+            "in": "formData",
+            "required": false,
+            "type": "file",
+            "format": "file",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created\nLocation: https://helpdesk.zendesk.com/api/v2/attachments/498483.json\n",
+            "schema": {
+              "$ref": "#/definitions/uploadingfilesResponse"
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/tickets/{id}/comments.json": {
+      "get": {
+        "description": "Listing comments",
+        "summary": "Get comments for Ticket",
+        "tags": [
+            "tickets"
+        ],
+        "operationId": "GetTicketComments",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/listCommentsResponse"
+            },
+            "examples": {
+              "application/json": {
+                "comments": [
+                  {
+                    "id": 35467,
+                    "author_id": 89567,
+                    "body": "My printer is on fire"
+                  },
+                  {
+                    "id": 36221,
+                    "author_id": 89589,
+                    "body": "My printer is on fire too!"
+                  }
+                ]
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/tickets/update_many.json": {
+      "put": {
+        "description": "Update multiple tickets",
+        "summary": "Update multiple tickets",
+        "tags": [
+            "tickets"
+        ],
+        "operationId": "UpdateTicketsBulk",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Ids"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/bulkUpdatingTicketsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/updateManyResponse"
+            },
+            "examples": {
+              "application/json": {
+                "ticket": {
+                  "status": "solved"
+                }
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/tickets.json": {
+      "post": {
+        "description": "Creating Tickets",
+        "summary": "Create Ticket",
+        "tags": [
+            "tickets"
+        ],
+        "operationId": "CreateTicket",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TicketCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/newTicketResponse"
+            },
+            "examples": {
+              "application/json": {
+                "ticket": {
+                  "id": 35436,
+                  "subject": "My printer is on fire!"
+                }
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/users.json": {
+      "post": {
+        "description": "Create User",
+        "summary": "Create User",
+        "tags": [
+            "users"
+        ],
+        "operationId": "CreateUser",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/newUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/showUserResponse"
+            },
+            "examples": {
+              "application/json": {
+                "user": {
+                  "id": 9873843,
+                  "name": "Roger Wilco"
+                }
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/organizations.json": {
+      "post": {
+        "description": "Creating Organizations",
+        "summary": "Create Organization",
+        "tags": [
+            "organizations"
+        ],
+        "operationId": "CreateOrganization",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/newOrganization"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/organizationCreateResponse"
+            },
+            "examples": {
+              "application/json": {
+                "organization": {
+                  "id": 35436,
+                  "name": "My Organization"
+                }
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/organizations/create_or_update.json": {
+      "post": {
+        "description": "Creates an organization if it doesn't already exist, or updates an existing organization identified by ID or external ID.",
+        "summary": "Creates an organization if it doesn't already exist, or updates an existing organization identified by ID or external ID.",
+        "tags": [
+            "organizations"
+        ],
+        "operationId": "Upsert an organization",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/organizationToUpsert"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/organizationCreateResponse"
+            },
+            "examples": {
+              "application/json": {
+                "organization": {
+                  "created_at": "2020-09-30T01:50:12Z",
+                  "details": null,
+                  "domain_names": [],
+                  "external_id": null,
+                  "group_id": null,
+                  "id": 23409462,
+                  "name": "My Organization",
+                  "notes": null,
+                  "organization_fields": null,
+                  "shared_comments": false,
+                  "shared_tickets": false,
+                  "tags": [],
+                  "updated_at": "2020-09-30T01:50:12Z",
+                  "url": "https://example.zendesk.com/api/v2/organizations/23409462.json"
+                }
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/organizations/{id}.json": {
+      "put": {
+        "description": "Update organization",
+        "summary": "Update organization",
+        "tags": [
+            "organizations"
+        ],
+        "operationId": "Update Organization",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/newOrganization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/organizationCreateResponse"
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/search.json": {
+      "get": {
+        "description": "Searches for tickets, users and organizations based on the user's search terms and returns a list of items that match the search terms.",
+        "summary": "Search",
+        "tags": [
+            "search"
+        ],
+        "operationId": "Search",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "The search query"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "One of updated_at, created_at, priority, status, or ticket_type. Defaults to sorting by relevance"
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "One of asc or desc. Defaults to desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/searchResponse"
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/users/search.json": {
+      "get": {
+        "description": "Specify a partial or full name or email address as the value of the query attribute. Example query=\"Gerry\". Specify an id number as the value of the external_id attribute. For more advanced searches use the Search API.",
+        "summary": "Search Users",
+        "tags": [
+            "users"
+        ],
+        "operationId": "SearchUsers",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "external_id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/searchResponse"
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/tickets/{id}.json": {
+      "put": {
+        "description": "Update ticket",
+        "summary": "Update ticket",
+        "tags": [
+            "tickets"
+        ],
+        "operationId": "UpdateTicket",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TicketUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/updatingTicketsResponse"
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/users/{id}.json": {
+      "put": {
+        "description": "The user whose id is provided in the URL will be merged into the existing user provided in the params. Any two arbitrary users can be merged.\n Allowed For: [Agents, restrictions apply on certain actions]\n",
+        "summary": "Update user",
+        "tags": [
+            "users"
+        ],
+        "operationId": "UpdateUser",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/endUserUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/updateUserResponse"
+            },
+            "examples": {
+              "application/json": {
+                "user": {
+                  "id": 9873843,
+                  "name": "Roger Wilco II",
+                  "suspended": true
+                }
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/users/create_or_update.json": {
+      "post": {
+        "description": "Creates a user if the user does not already exist, or updates an existing user identified by e-mail address or external ID.",
+        "summary": "Creates a user if the user does not already exist, or updates an existing user identified by e-mail address or external ID.",
+        "tags": [
+            "users"
+        ],
+        "operationId": "Upsert a user",
+        "deprecated": false,
+        "produces": [
+            "application/json"
+        ],
+        "consumes": [
+            "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/userToUpsert"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/showUserResponse"
+            },
+            "examples": {
+              "application/json": {
+                "user": {
+                  "id": 9873843,
+                  "name": "Roger Wilco"
+                }
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "uploadingfilesResponse": {
+      "title": "uploadingfilesResponse",
+      "type": "object",
+      "properties": {
+        "upload": {
+          "$ref": "#/definitions/Upload"
+        }
+      }
+    },
+    "Upload": {
+      "title": "Upload",
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "attachment": {
+          "$ref": "#/definitions/Attachment"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Attachment"
+          }
+        }
+      }
+    },
+    "Attachment": {
+      "title": "Attachment",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "name": {
+          "type": "string"
+        },
+        "content_url": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "string"
+        },
+        "size": {
+          "type": "number",
+          "format": "double"
+        },
+        "thumbnails": {
+          "type": "object"
+        }
+      }
+    },
+    "listCommentsResponse": {
+      "title": "listCommentsResponse",
+      "type": "object",
+      "properties": {
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment9"
+          }
+        }
+      }
+    },
+    "Comment9": {
+      "title": "Comment9",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "author_id": {
+          "type": "number",
+          "format": "double"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "bulkUpdatingTicketsRequest": {
+      "title": "bulkUpdatingTicketsRequest",
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "$ref": "#/definitions/Ticket"
+        }
+      }
+    },
+    "updateManyResponse": {
+      "title": "updateManyResponse",
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "$ref": "#/definitions/Ticket"
+        }
+      }
+    },
+    "Ticket": {
+      "title": "Ticket",
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "TicketType": {
+      "type": "object",
+      "title": "The root schema",
+      "description": "The root schema comprises the entire JSON document.",
+      "default": {},
+      "properties": {
+        "ticket": {
+          "type": "object",
+          "title": "The ticket schema",
+          "description": "An explanation about the purpose of this instance.",
+          "default": {},
+          "properties": {
+            "url": {
+              "type": "string",
+              "title": "The url schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "id": {
+              "type": "integer",
+              "title": "The id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": 0
+            },
+            "external_id": {
+              "type": "string",
+              "title": "The external_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "via": {
+              "type": "object",
+              "title": "The via schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": {},
+              "properties": {
+                "channel": {
+                  "type": "string",
+                  "title": "The channel schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": ""
+                },
+                "source": {
+                  "type": "object",
+                  "title": "The source schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": {},
+                  "properties": {
+                    "from": {
+                      "type": "object",
+                      "title": "The from schema",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": {}
+                    },
+                    "to": {
+                      "type": "object",
+                      "title": "The to schema",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": {}
+                    },
+                    "rel": {
+                      "type": "string",
+                      "title": "The rel schema",
+                      "description": "An explanation about the purpose of this instance.",
+                      "default": null
+                    }
+                  }
+                }
+              }
+            },
+            "created_at": {
+              "type": "string",
+              "title": "The created_at schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "updated_at": {
+              "type": "string",
+              "title": "The updated_at schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "type": {
+              "type": "string",
+              "title": "The type schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "subject": {
+              "type": "string",
+              "title": "The subject schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "raw_subject": {
+              "type": "string",
+              "title": "The raw_subject schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "description": {
+              "type": "string",
+              "title": "The description schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "priority": {
+              "type": "string",
+              "title": "The priority schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "status": {
+              "type": "string",
+              "title": "The status schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": ""
+            },
+            "recipient": {
+              "type": "string",
+              "title": "The recipient schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": null
+            },
+            "requester_id": {
+              "type": "integer",
+              "title": "The requester_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": 0
+            },
+            "submitter_id": {
+              "type": "integer",
+              "title": "The submitter_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": 0
+            },
+            "assignee_id": {
+              "type": "integer",
+              "title": "The assignee_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": 0
+            },
+            "organization_id": {
+              "type": "integer",
+              "title": "The organization_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": null
+            },
+            "group_id": {
+              "type": "integer",
+              "title": "The group_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": 0
+            },
+            "collaborator_ids": {
+              "type": "array",
+              "title": "The collaborator_ids schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": [],
+              "items": {
+                "type": "integer",
+                "title": "The first anyOf schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0
+              }
+            },
+            "follower_ids": {
+              "type": "array",
+              "title": "The follower_ids schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": [],
+              "items": {
+                "type": "integer",
+                "title": "The first anyOf schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0
+              }
+            },
+            "email_cc_ids": {
+              "type": "array",
+              "title": "The email_cc_ids schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": [],
+              "items": {
+                "type": "integer",
+                "title": "The first anyOf schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0
+              }
+            },
+            "forum_topic_id": {
+              "type": "integer",
+              "title": "The forum_topic_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": null
+            },
+            "problem_id": {
+              "type": "integer",
+              "title": "The problem_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": null
+            },
+            "has_incidents": {
+              "type": "boolean",
+              "title": "The has_incidents schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": false
+            },
+            "is_public": {
+              "type": "boolean",
+              "title": "The is_public schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": false
+            },
+            "due_at": {
+              "type": "string",
+              "title": "The due_at schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": null
+            },
+            "tags": {
+              "type": "array",
+              "title": "The tags schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": [],
+              "items": {
+                "type": "string",
+                "title": "The first anyOf schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": ""
+              }
+            },
+            "custom_fields": {
+              "type": "array",
+              "title": "The custom_fields schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": [],
+              "items": {
+                "type": "object",
+                "title": "The first anyOf schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": {},
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "title": "The id schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0
+                  },
+                  "value": {
+                    "type": "string",
+                    "title": "The value schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": ""
+                  }
+                }
+              }
+            },
+            "satisfaction_rating": {
+              "type": "object",
+              "title": "The satisfaction_rating schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": {},
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "title": "The id schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": 0
+                },
+                "score": {
+                  "type": "string",
+                  "title": "The score schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": ""
+                },
+                "comment": {
+                  "type": "string",
+                  "title": "The comment schema",
+                  "description": "An explanation about the purpose of this instance.",
+                  "default": ""
+                }
+              }
+            },
+            "sharing_agreement_ids": {
+              "type": "array",
+              "title": "The sharing_agreement_ids schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": [],
+              "items": {
+                "type": "integer",
+                "title": "The first anyOf schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0
+              }
+            },
+            "followup_ids": {
+              "type": "array",
+              "title": "The followup_ids schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": [],
+              "items": {
+                "type": "integer",
+                "title": "The first anyOf schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0
+              }
+            },
+            "brand_id": {
+              "type": "integer",
+              "title": "The brand_id schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": 0
+            },
+            "allow_channelback": {
+              "type": "boolean",
+              "title": "The allow_channelback schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": false
+            },
+            "allow_attachments": {
+              "type": "boolean",
+              "title": "The allow_attachments schema",
+              "description": "An explanation about the purpose of this instance.",
+              "default": false
+            },
+            "comment": {
+              "$ref": "#/definitions/CommentRequest"
+            },
+            "voice_comment": {
+              "$ref": "#/definitions/VoiceCommentRequest"
+            }
+          }
+        },
+        "audit": {
+          "$ref": "#/definitions/Audit1"
+        }
+      }
+    },
+    "TicketCreate": {
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "type": "object",
+          "properties": {
+            "external_id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "priority": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "requester_id": {
+              "type": "integer"
+            },
+            "assignee_id": {
+              "type": "integer"
+            },
+            "organization_id": {
+              "type": "integer"
+            },
+            "group_id": {
+              "type": "integer"
+            },
+            "collaborator_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "problem_id": {
+              "type": "integer"
+            },
+            "due_at": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "custom_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "raw_subject": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "recipient": {
+              "type": "string"
+            },
+            "submitter_id": {
+              "type": "integer"
+            },
+            "email_cc_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "follower_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "via_followup_source_id": {
+              "type": "integer"
+            },
+            "macro_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "ticket_form_id": {
+              "type": "integer"
+            },
+            "brand_id": {
+              "type": "integer"
+            },
+            "via": {
+              "default": {},
+              "description": "An explanation about the purpose of this instance.",
+              "additionalProperties": true,
+              "type": "object",
+              "title": "The via schema",
+              "properties": {
+                "channel": {
+                  "default": "",
+                  "description": "An explanation about the purpose of this instance.",
+                  "type": "string",
+                  "title": "The channel schema"
+                },
+                "source": {
+                  "default": {},
+                  "description": "An explanation about the purpose of this instance.",
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "The source schema",
+                  "properties": {
+                    "rel": {
+                      "default": null,
+                      "description": "An explanation about the purpose of this instance.",
+                      "type": "string",
+                      "title": "The rel schema"
+                    },
+                    "from": {
+                      "default": {},
+                      "description": "An explanation about the purpose of this instance.",
+                      "additionalProperties": true,
+                      "type": "object",
+                      "title": "The from schema"
+                    },
+                    "to": {
+                      "default": {},
+                      "description": "An explanation about the purpose of this instance.",
+                      "additionalProperties": true,
+                      "type": "object",
+                      "title": "The to schema"
+                    }
+                  }
+                }
+              }
+            },
+            "collaborators": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "comment": {
+              "$ref": "#/definitions/CommentRequest"
+            },
+            "voice_comment": {
+              "$ref": "#/definitions/VoiceCommentRequest"
+            }
+          }
+        }
+      }
+    },
+    "TicketUpdate": {
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "type": "object",
+          "properties": {
+            "external_id": {
+              "type": "integer"
+            },
+            "type": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "priority": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "requester_id": {
+              "type": "integer"
+            },
+            "assignee_id": {
+              "type": "integer"
+            },
+            "organization_id": {
+              "type": "integer"
+            },
+            "group_id": {
+              "type": "integer"
+            },
+            "collaborator_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "problem_id": {
+              "type": "integer"
+            },
+            "due_at": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "custom_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "sharing_agreement_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "assignee_email": {
+              "type": "string"
+            },
+            "collaborators": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "additional_collaborators": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "followers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "user_email": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "email_ccs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "user_email": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "updated_stamp": {
+              "type": "string"
+            },
+            "safe_update": {
+              "type": "boolean"
+            },
+            "macro_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "attribute_value_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "comment": {
+              "$ref": "#/definitions/CommentRequest"
+            },
+            "voice_comment": {
+              "$ref": "#/definitions/VoiceCommentRequest"
+            }
+          }
+        }
+      }
+    },
+    "CommentRequest": {
+      "type": "object",
+      "properties": {
+        "public": {
+          "type": "boolean"
+        },
+        "body": {
+          "type": "string"
+        },
+        "html_body": {
+          "type": "string"
+        },
+        "author_id": {
+          "type": "integer"
+        },
+        "uploads": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "VoiceCommentRequest": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "recording_url": {
+          "type": "string"
+        },
+        "started_at": {
+          "type": "string"
+        },
+        "call_duration": {
+          "type": "integer"
+        },
+        "answered_by_id": {
+          "type": "integer"
+        },
+        "transcription_text": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        }
+      }
+    },
+    "newTicketResponse": {
+      "title": "newTicketResponse",
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "$ref": "#/definitions/TicketType"
+        }
+      }
+    },
+    "newUser": {
+      "title": "newUser",
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User4"
+        }
+      }
+    },
+    "User4": {
+      "type": "object",
+      "title": "The root schema",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "The name schema"
+        },
+        "external_id": {
+          "type": "string",
+          "title": "The external_id schema"
+        },
+        "alias": {
+          "type": "string",
+          "title": "The alias schema"
+        },
+        "verified": {
+          "type": "boolean",
+          "title": "The verified schema"
+        },
+        "locale": {
+          "type": "string",
+          "title": "The locale schema"
+        },
+        "locale_id": {
+          "type": "integer",
+          "title": "The locale_id schema"
+        },
+        "time_zone": {
+          "type": "string",
+          "title": "The time_zone schema"
+        },
+        "email": {
+          "type": "string",
+          "title": "The email schema"
+        },
+        "phone": {
+          "type": "string",
+          "title": "The phone schema"
+        },
+        "signature": {
+          "type": "string",
+          "title": "The signature schema"
+        },
+        "details": {
+          "type": "string",
+          "title": "The details schema"
+        },
+        "notes": {
+          "type": "string",
+          "title": "The notes schema"
+        },
+        "organization_id": {
+          "type": "integer",
+          "title": "The organization_id schema"
+        },
+        "role": {
+          "type": "string",
+          "title": "The role schema"
+        },
+        "moderator": {
+          "type": "boolean",
+          "title": "The moderator schema"
+        },
+        "ticket_restriction": {
+          "type": "string",
+          "title": "The ticket_restriction schema"
+        },
+        "only_private_comments": {
+          "type": "boolean",
+          "title": "The only_private_comments schema"
+        },
+        "tags": {
+          "type": "array",
+          "title": "The tags schema",
+          "items": {
+            "type": "string",
+            "title": "The first anyOf schema"
+          }
+        },
+        "restricted_agent": {
+          "type": "boolean",
+          "title": "The restricted_agent schema"
+        },
+        "suspended": {
+          "type": "boolean",
+          "title": "The suspended schema"
+        },
+        "custom_role_id": {
+          "type": "integer",
+          "title": "The custom_role_id schema"
+        },
+        "default_group_id": {
+          "type": "integer",
+          "title": "The default_group_id schema"
+        },
+        "remote_photo_url": {
+          "type": "string",
+          "title": "The remote_photo_url schema"
+        },
+        "user_fields": {
+          "type": "object",
+          "title": "the user_fields schema",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string",
+                "title": "The first anyOf schema"
+              }
+            ]
+          }
+        },
+        "identities": {
+          "type": "array",
+          "title": "the identities schema",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "showUserResponse": {
+      "title": "showUserResponse",
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "User": {
+      "title": "User",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "url": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "time_zone": {
+          "type": "string"
+        },
+        "iana_time_zone": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "shared_phone_number": {
+          "type": "boolean"
+        },
+        "photo": {
+          "type": "object",
+          "properties": {
+            "attachment": {
+              "$ref": "#/definitions/Attachment"
+            }
+          }
+        },
+        "locale_id": {
+          "type": "number"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "number"
+        },
+        "role": {
+          "type": "string"
+        },
+        "verified": {
+          "type": "boolean"
+        },
+        "external_id": {
+          "type": "number"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alias": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "shared": {
+          "type": "boolean"
+        },
+        "shared_agent": {
+          "type": "boolean"
+        },
+        "last_login_at": {
+          "type": "string"
+        },
+        "two_factor_auth_enabled": {
+          "type": "boolean"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "details": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "role_type": {
+          "type": "number"
+        },
+        "custom_role_id": {
+          "type": "number"
+        },
+        "moderator": {
+          "type": "boolean"
+        },
+        "ticket_restriction": {
+          "type": "string"
+        },
+        "only_private_comments": {
+          "type": "boolean"
+        },
+        "restricted_agent": {
+          "type": "boolean"
+        },
+        "suspended": {
+          "type": "boolean"
+        },
+        "chat_only": {
+          "type": "boolean"
+        },
+        "default_group_id": {
+          "type": "string"
+        },
+        "report_csv": {
+          "type": "boolean"
+        },
+        "user_fields": {
+          "type": "object",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "newOrganization": {
+      "title": "newOrganization",
+      "type": "object",
+      "properties": {
+        "organization": {
+          "$ref": "#/definitions/Organization3"
+        }
+      }
+    },
+    "Organization3": {
+      "title": "Organization3",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "domain_names": {
+          "type": "array",
+          "title": "The domain_names schema",
+          "items": {
+            "type": "string"
+          }
+        },
+        "details": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "integer"
+        },
+        "shared_tickets": {
+          "type": "boolean"
+        },
+        "shared_comments": {
+          "type": "boolean"
+        },
+        "tags": {
+          "type": "array",
+          "title": "The tags schema",
+          "items": {
+            "type": "string",
+            "title": "The first anyOf schema"
+          }
+        },
+        "organization_fields": {
+          "type": "object"
+        }
+      }
+    },
+    "organizationCreateResponse": {
+      "title": "organizationCreateResponse",
+      "type": "object",
+      "properties": {
+        "organization": {
+          "$ref": "#/definitions/Organization"
+        }
+      }
+    },
+    "organizationToUpsert": {
+      "title": "organizationToUpsert",
+      "type": "object",
+      "properties": {
+        "organization": {
+          "$ref": "#/definitions/Organization3"
+        }
+      }
+    },
+    "Organization": {
+      "title": "Organization",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "name": {
+          "type": "string"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "domain_names": {
+          "type": "array",
+          "title": "The domain_names schema",
+          "items": {
+            "type": "string"
+          }
+        },
+        "details": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "integer"
+        },
+        "shared_tickets": {
+          "type": "boolean"
+        },
+        "shared_comments": {
+          "type": "boolean"
+        },
+        "tags": {
+          "type": "array",
+          "title": "The tags schema",
+          "items": {
+            "type": "string",
+            "title": "The first anyOf schema"
+          }
+        },
+        "organization_fields": {
+          "type": "object"
+        },
+        "url": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "object"
+        }
+      }
+    },
+    "searchResponse": {
+      "title": "searchResponse",
+      "type": "object"
+    },
+    "Result4": {
+      "title": "Result4",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "result_type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "updatingTicketsResponse": {
+      "title": "updatingTicketsResponse",
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "$ref": "#/definitions/Ticket1"
+        },
+        "audit": {
+          "$ref": "#/definitions/Audit1"
+        }
+      }
+    },
+    "Ticket1": {
+      "title": "Ticket1",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "requester_id": {
+          "type": "integer"
+        },
+        "assignee_id": {
+          "type": "integer"
+        },
+        "assignee_email": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "integer"
+        },
+        "organization_id": {
+          "type": "integer"
+        },
+        "collaborator_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "collaborators": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "additional_collaborators": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "followers": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "email_ccs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "string"
+              },
+              "user_email": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "type": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "external_id": {
+          "type": "integer"
+        },
+        "problem_id": {
+          "type": "integer"
+        },
+        "due_at": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "updated_stamp": {
+          "type": "string"
+        },
+        "safe_update": {
+          "type": "boolean"
+        },
+        "sharing_agreement_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "macro_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "attribute_value_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "comment": {
+          "$ref": "#/definitions/CommentRequest"
+        },
+        "voice_comment": {
+          "$ref": "#/definitions/VoiceCommentRequest"
+        },
+        "url": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "Audit1": {
+      "title": "Audit1",
+      "type": "object",
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Event1"
+          }
+        }
+      }
+    },
+    "Event1": {
+      "title": "Event1",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "type": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "public": {
+          "type": "boolean"
+        },
+        "attachments": {
+          "type": "object"
+        }
+      }
+    },
+    "endUserUpdate": {
+      "title": "endUserUpdate",
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User5"
+        }
+      }
+    },
+    "User5": {
+      "title": "User5",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "updateUserResponse": {
+      "title": "updateUserResponse",
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User3"
+        }
+      }
+    },
+    "User3": {
+      "title": "User3",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "double"
+        },
+        "name": {
+          "type": "string"
+        },
+        "suspended": {
+          "type": "boolean"
+        }
+      }
+    },
+    "userToUpsert": {
+      "title": "userToUpsert",
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User4"
+        }
+      }
+    }
+  },
+  "security": [
+
+    {"Basic Authentication": []},
+    { "Api Token": []},
+    { "OAuth2 Access Code": [
+          "read",
+          "write"
+      ]}
+
+  ],
+  "tags": [
+    {
+      "name": "account",
+      "description": ""
+    },
+    {
+      "name": "activities",
+      "description": ""
+    },
+    {
+      "name": "apps",
+      "description": ""
+    },
+    {
+      "name": "uploads",
+      "description": ""
+    },
+    {
+      "name": "attachments",
+      "description": ""
+    },
+    {
+      "name": "tickets",
+      "description": ""
+    },
+    {
+      "name": "audit_logs",
+      "description": ""
+    },
+    {
+      "name": "autocomplete",
+      "description": ""
+    },
+    {
+      "name": "automations",
+      "description": ""
+    },
+    {
+      "name": "categories",
+      "description": ""
+    },
+    {
+      "name": "custom_roles",
+      "description": ""
+    },
+    {
+      "name": "dynamic_content",
+      "description": ""
+    },
+    {
+      "name": "end_users",
+      "description": ""
+    },
+    {
+      "name": "forums",
+      "description": ""
+    },
+    {
+      "name": "forum_subscriptions",
+      "description": ""
+    },
+    {
+      "name": "users",
+      "description": ""
+    },
+    {
+      "name": "groups",
+      "description": ""
+    },
+    {
+      "name": "group_memberships",
+      "description": ""
+    },
+    {
+      "name": "incremental",
+      "description": ""
+    },
+    {
+      "name": "job_statuses",
+      "description": ""
+    },
+    {
+      "name": "locales",
+      "description": ""
+    },
+    {
+      "name": "macros",
+      "description": ""
+    },
+    {
+      "name": "channels",
+      "description": ""
+    },
+    {
+      "name": "oauth",
+      "description": ""
+    },
+    {
+      "name": "organizations",
+      "description": ""
+    },
+    {
+      "name": "organization_fields",
+      "description": ""
+    },
+    {
+      "name": "user_fields",
+      "description": ""
+    },
+    {
+      "name": "organization_subscriptions",
+      "description": ""
+    },
+    {
+      "name": "requests",
+      "description": ""
+    },
+    {
+      "name": "satisfaction_ratings",
+      "description": ""
+    },
+    {
+      "name": "search",
+      "description": ""
+    },
+    {
+      "name": "portal",
+      "description": ""
+    },
+    {
+      "name": "sharing_agreements",
+      "description": ""
+    },
+    {
+      "name": "recipient_addresses",
+      "description": ""
+    },
+    {
+      "name": "suspended_tickets",
+      "description": ""
+    },
+    {
+      "name": "tags",
+      "description": ""
+    },
+    {
+      "name": "topics",
+      "description": ""
+    },
+    {
+      "name": "targets",
+      "description": ""
+    },
+    {
+      "name": "problems",
+      "description": ""
+    },
+    {
+      "name": "exports",
+      "description": ""
+    },
+    {
+      "name": "ticket_fields",
+      "description": ""
+    },
+    {
+      "name": "ticket_forms",
+      "description": ""
+    },
+    {
+      "name": "imports",
+      "description": ""
+    },
+    {
+      "name": "ticket_metrics",
+      "description": ""
+    },
+    {
+      "name": "import",
+      "description": ""
+    },
+    {
+      "name": "topic_subscriptions",
+      "description": ""
+    },
+    {
+      "name": "triggers",
+      "description": ""
+    },
+    {
+      "name": "views",
+      "description": ""
+    },
+    {
+      "name": "help_center",
+      "description": ""
+    },
+    {
+      "name": "bookmarks",
+      "description": ""
+    }
+  ]
+}
